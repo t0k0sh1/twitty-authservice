@@ -111,14 +111,14 @@ describe('/api/auth/signup', () => {
       .expect(422)
       .expect((res) => {
         expect(res.body).toEqual({
-          message: 'Invalid parameter'
+          message: 'Invalid parameter',
         });
         db.user.count({
-          where: {}
+          where: {},
         })
           .then((count) => {
             expect(count).toEqual(0);
-          })
+          });
       })
       .end(done);
   });
@@ -133,14 +133,14 @@ describe('/api/auth/signup', () => {
       .expect(422)
       .expect((res) => {
         expect(res.body).toEqual({
-          message: 'Invalid parameter'
+          message: 'Invalid parameter',
         });
         db.user.count({
-          where: {}
+          where: {},
         })
           .then((count) => {
             expect(count).toEqual(0);
-          })
+          });
       })
       .end(done);
   });
@@ -155,14 +155,14 @@ describe('/api/auth/signup', () => {
       .expect(422)
       .expect((res) => {
         expect(res.body).toEqual({
-          message: 'Invalid parameter'
+          message: 'Invalid parameter',
         });
         db.user.count({
-          where: {}
+          where: {},
         })
           .then((count) => {
             expect(count).toEqual(0);
-          })
+          });
       })
       .end(done);
   });
@@ -178,16 +178,15 @@ describe('/api/auth/signup', () => {
       .expect(422)
       .expect((res) => {
         expect(res.body).toEqual({
-          message: 'Invalid parameter'
+          message: 'Invalid parameter',
         });
         db.user.count({
-          where: {}
+          where: {},
         })
           .then((count) => {
             expect(count).toEqual(0);
-          })
+          });
       })
       .end(done);
   });
-
 });

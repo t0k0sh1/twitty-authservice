@@ -9,9 +9,9 @@ import db from '../src/models';
 beforeEach(async () => {
   await db.user.destroy({
     where: {},
-    truncate: true
-  })
-})
+    truncate: true,
+  });
+});
 
 describe('/api/auth/signin', () => {
   it('should sign in exists user with username', (done) => {
@@ -25,7 +25,7 @@ describe('/api/auth/signin', () => {
           .post('/api/auth/signin')
           .send({
             username: 'test',
-            password: '12345678'
+            password: '12345678',
           })
           .expect(200)
           .expect((res) => {
@@ -34,8 +34,8 @@ describe('/api/auth/signin', () => {
             expect(res.body.accessToken).not.toBeNull();
           })
           .end(done);
-      })
-  })
+      });
+  });
 
   it('should sign in exists user with email', (done) => {
     db.user.create({
@@ -48,7 +48,7 @@ describe('/api/auth/signin', () => {
           .post('/api/auth/signin')
           .send({
             username: 'test@hoge.com',
-            password: '12345678'
+            password: '12345678',
           })
           .expect(200)
           .expect((res) => {
@@ -57,8 +57,8 @@ describe('/api/auth/signin', () => {
             expect(res.body.accessToken).not.toBeNull();
           })
           .end(done);
-      })
-  })
+      });
+  });
 
   it('should not sign in not exists', (done) => {
     db.user.create({
@@ -71,17 +71,17 @@ describe('/api/auth/signin', () => {
           .post('/api/auth/signin')
           .send({
             username: 'test1',
-            password: '12345678'
+            password: '12345678',
           })
           .expect(404)
           .expect((res) => {
             expect(res.body).toEqual({
-              message: 'User not found'
-            })
+              message: 'User not found',
+            });
           })
           .end(done);
-      })
-  })
+      });
+  });
 
   it('should not sign in invalid password', (done) => {
     db.user.create({
@@ -94,17 +94,17 @@ describe('/api/auth/signin', () => {
           .post('/api/auth/signin')
           .send({
             username: 'test',
-            password: '87654321'
+            password: '87654321',
           })
           .expect(401)
           .expect((res) => {
             expect(res.body).toEqual({
-              message: 'Invalid password'
-            })
+              message: 'Invalid password',
+            });
           })
           .end(done);
-      })
-  })
+      });
+  });
 
   it('should not sign in without username field', (done) => {
     db.user.create({
@@ -116,17 +116,17 @@ describe('/api/auth/signin', () => {
         request(app)
           .post('/api/auth/signin')
           .send({
-            password: '12345678'
+            password: '12345678',
           })
           .expect(422)
           .expect((res) => {
             expect(res.body).toEqual({
-              message: 'Invalid parameter'
-            })
+              message: 'Invalid parameter',
+            });
           })
           .end(done);
-      })
-  })
+      });
+  });
 
   it('should not sign in without password field', (done) => {
     db.user.create({
@@ -138,15 +138,15 @@ describe('/api/auth/signin', () => {
         request(app)
           .post('/api/auth/signin')
           .send({
-            username: 'test'
+            username: 'test',
           })
           .expect(422)
           .expect((res) => {
             expect(res.body).toEqual({
-              message: 'Invalid parameter'
-            })
+              message: 'Invalid parameter',
+            });
           })
           .end(done);
-      })
-  })
-})
+      });
+  });
+});

@@ -22,5 +22,5 @@ export default (app) => {
       body('password').notEmpty(),
     ],
     controller.signin,
-  )
+  );
 };

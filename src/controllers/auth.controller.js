@@ -24,7 +24,7 @@ const signup = (req, res) => {
       .catch((err) => {
         res.status(500).send({ message: err.message });
       });
-  };
+  }
 };
 
 const signin = (req, res) => {
@@ -37,8 +37,8 @@ const signin = (req, res) => {
         [Op.or]: {
           username: req.body.username,
           email: req.body.username,
-        }
-      }
+        },
+      },
     })
       .then((user) => {
         if (!user) {
@@ -70,9 +70,9 @@ const signin = (req, res) => {
         res.status(500).send({ message: err.message });
       });
   }
-}
+};
 
 export default {
   signup,
-  signin
+  signin,
 };
