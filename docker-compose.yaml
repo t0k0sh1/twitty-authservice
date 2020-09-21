@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  app:
+    image: t0k0sh1/twitty_authservice:latest
+    environment:
+      NODE_ENV: development
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_NAME: testdb
+      DB_HOST: mysql
+      JWT_SECRET_KEY: "123456789"
+    depends_on:
+      - mysql
+    ports:
+      - 3000:80
   # MySQL
   mysql:
     image: mysql:5.7
