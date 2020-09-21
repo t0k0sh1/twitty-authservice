@@ -1,0 +1,94 @@
+alias:
+  default_env: &default_env
+    docker:
+      - image: circleci/node:14.11.0
+        environment:
+          NODE_ENV: development
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_NAME: testdb
+          DB_HOST: 127.0.0.1
+      - image: circleci/mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testdb
+  setup_remote_docker: &setup_remote_docker
+    version: 17.11.0-ce
+    docker_layer_caching: false
+
+version: 2
+jobs:
+  test:
+    <<: *default_env
+    steps:
+      - setup_remote_docker: *setup_remote_docker
+      - checkout
+      - run:
+          name: Install
+          command: yarn install
+      - run:
+          name: Lint
+          command: yarn lint
+      - run:
+          name: Wait until startup MySQL
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 10
+            done
+            echo Failed waiting for MySQL && exit 1
+      - run:
+          name: Create database
+          command: yarn db:create --env development
+      - run:
+          name: Migration
+          command: yarn db:migrate --env development
+      - run:
+          name: Test
+          command: yarn test
+      - run:
+          name: Build
+          command: docker build -t ${OWNER}/${IMAGE_NAME}:latest .
+      - run:
+          name: Save image
+          command: docker image save ${OWNER}/${IMAGE_NAME}:latest > ./docker-image.tar
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./docker-image.tar
+  push:
+    <<: *default_env
+    steps:
+      - setup_remote_docker: *setup_remote_docker
+      - attach_workspace:
+          at: .
+      - run:
+          name: Load image from tar
+          command: docker load -i ./docker-image.tar
+      - run:
+          name: Tag to latest
+          command: docker tag ${OWNER}/${IMAGE_NAME}:latest ${OWNER}/${IMAGE_NAME}:$CIRCLE_TAG
+      - run:
+          name: Docker login
+          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run:
+          name: Push image to registry
+          command: docker push ${OWNER}/${IMAGE_NAME}
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - push:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
